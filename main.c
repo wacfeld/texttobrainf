@@ -4,6 +4,7 @@
 #define MAXIN 100000
 #define maxrange sizeof(rangefreq)/sizeof(int)
 
+// frequency aspect is never used, only tested for nonzero (but a smarter person might be able to used frequency to further optimize)
 int rangefreq[] = {
     0,
     0,
@@ -18,6 +19,8 @@ int rangefreq[] = {
     0,
     0
 };
+
+// which range each printable ASCII code falls into
 int rangeinds[] = {
     [32 ... 39] = 0,
     [40 ... 47] = 1,
@@ -33,11 +36,11 @@ int rangeinds[] = {
     [120 ... 127] = 11
 };
 
-int rangeinits[] = { 4,5,6,7,8,9,10,11,12,13,14,15 };
-int rangestarts[] = {32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120};
+int rangeinits[] = { 4,5,6,7,8,9,10,11,12,13,14,15 }; // how much to multiply by 8, to init that range
+int rangestarts[] = {32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120}; // used to set curranges on init
 
-int comprangeref[maxrange];
-int curranges[maxrange];
+int comprangeref[maxrange]; // maps the absolute range indices (0-11) to the compressed ones, because some aren't used
+int curranges[maxrange]; // what value each brainF cell currently is at
 
 char input[MAXIN];
 char output[MAXIN];
@@ -58,14 +61,16 @@ int main()
     printf("input: ");
     scanf("%[^\n]", input);
 
-    if(!strlen(input))
+    if(!strlen(input)) // don't bother with init at all, waste of time
         return 0;
 
+    // figure out which ranges are used
     for(int i = 0; i < strlen(input); i++)
     {
         rangefreq[rangeinds[input[i]]]++;
     }
 
+    // compress ranges (removed unused ones)
     int rangecount = 0;
     for(int i = 0; i < maxrange; i++)
     {
@@ -75,9 +80,10 @@ int main()
         }
     }
 
+    // start with 8, multiply correspondingly to init. might be able to further optimize by making inits piggy back off each other, but that's too difficult.
+    // maybe it would be possible to do a universal init that's actually pretty fast, idk. downside is that we don't get compression then
     //printf("%d\n", outi);
     outstr("++++++++[-");
-
     for(int i = 0; i < rangecount; i++)
     {
         curranges[i] = rangestarts[comprangeref[i]];
@@ -88,9 +94,12 @@ int main()
     for(int j = 0; j < rangecount; j++)
         out('<');
     out(']');
+
+    // set up pointer
     out('>'); // in cell 0
     int curcell = 0;
 
+    // produce brainF code
     for(int i = 0; i < strlen(input); i++)
     {
         //putd(outi);
@@ -129,6 +138,7 @@ int main()
         out('.');
     }
 
+    // print number of chars used, and corresponding code
     printf("%d\n", outi);
     out(0);
     puts(output);
