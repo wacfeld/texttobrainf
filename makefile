@@ -1,2 +1,4 @@
-a.out: main.c
-	clang main.c
+all: main.c
+	clang main.c -o main
+run:
+	./main
