@@ -14,7 +14,7 @@
 #include <string.h>
 //#include <time.h>
 #define putd(x) printf(#x ": %d\n", x)
-#define MAXIN 10000
+#define MAXIN 100000
 #define maxrange sizeof(rangefreq)/sizeof(int)
 
 int rangefreq[] = {
@@ -88,7 +88,7 @@ int main()
         }
     }
 
-    printf("%d\n", outi);
+    //printf("%d\n", outi);
     outstr("++++++++[-");
 
     for(int i = 0; i < rangecount; i++)
@@ -106,12 +106,18 @@ int main()
 
     for(int i = 0; i < strlen(input); i++)
     {
+        //putd(outi);
+        //putd(i);
+        //putd(0);
         // ascertain the range
         char c = input[i];
         int rawrange = rangeinds[c];
         int comprange;
+        //putd(c);
+        //putd(rawrange);
         for(comprange = 0; comprangeref[comprange] != rawrange; comprange++) ;
 
+        //putd(1);
         // navigate to cell
         int celldelta = comprange - curcell;
         if(celldelta > 0)
@@ -121,7 +127,7 @@ int main()
             for(int j = 0; j < -celldelta; j++)
                 out('<');
         curcell = comprange;
-
+//putd(2);
         // adjust value
         int valdelta = c - curranges[comprange];
         if(valdelta > 0)
@@ -131,7 +137,7 @@ int main()
             for(int j = 0; j < -valdelta; j++)
                 out('-');
         curranges[comprange] = c;
-
+//putd(3);
         // print & profit
         out('.');
     }
